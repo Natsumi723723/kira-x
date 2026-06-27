@@ -39,48 +39,6 @@
 
 ---
 
-## 🚀 セットアップ
-
-### 1. リポジトリをクローン
-
-```bash
-git clone https://github.com/<your-username>/kira-x.git
-cd kira-x
-npm install
-```
-
-### 2. Supabase プロジェクトを作成
-
-[supabase.com](https://supabase.com) で新規プロジェクトを作成し、`setup_supabase.sql` を **SQL Editor** で実行。
-
-### 3. 環境変数を設定
-
-`.env.local` を作成：
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
-
-### 4. 起動
-
-```bash
-npm run dev
-```
-
-`http://localhost:3000/kira-x/` を開く ✦
-
----
-
-## 🌐 GitHub Pages へのデプロイ
-
-`main` にプッシュすると GitHub Actions が自動でビルド＆デプロイします。
-
-初回のみ設定が必要：
-
-1. **Secrets を追加**: `Settings > Secrets > Actions` で `NEXT_PUBLIC_SUPABASE_URL` と `NEXT_PUBLIC_SUPABASE_ANON_KEY` を登録
-2. **Pages を有効化**: `Settings > Pages > Source` を **GitHub Actions** に設定
-
 ---
 
 ## 🗄 データベース構成
