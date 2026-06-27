@@ -1,36 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# kira ✦
 
-## Getting Started
+**かわいいをつぶやこう♡** — X（Twitter）クローン × ピンクな世界観
 
-First, run the development server:
+> PINKは色じゃない。存在力・生命力・創造力の SUPERPOWER。
+
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
+![Supabase](https://img.shields.io/badge/Supabase-green?style=for-the-badge&logo=supabase)
+![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=for-the-badge&logo=typescript)
+
+---
+
+## ✦ 機能
+
+| 機能 | 説明 |
+|------|------|
+| 📝 投稿 | 140文字以内でつぶやき |
+| ♡ いいね | ハートアニメーション付き |
+| 🔁 リポスト | ワンタップで拡散 |
+| 👤 フォロー / フォロワー | 相互フォロー管理 |
+| 🏠 タイムライン | おすすめ / フォロー中 切り替え |
+| 🔍 検索 | ユーザー名・表示名で検索 |
+| 🖼 プロフィール編集 | 名前・自己紹介・アイコン写真の変更 |
+| ⚡ リアルタイム更新 | 新しい投稿が自動でタイムラインに追加 |
+| 📱 モバイルファースト | 430px 中央寄せ・ボトムナビ |
+
+---
+
+## 🛠 技術スタック
+
+- **フレームワーク**: [Next.js 15](https://nextjs.org/) App Router + TypeScript
+- **バックエンド**: [Supabase](https://supabase.com/) (Auth / PostgreSQL / Storage / Realtime)
+- **スタイリング**: Tailwind CSS + CSS Variables
+- **フォント**: Mochiy Pop One / M PLUS Rounded 1c (Google Fonts)
+
+---
+
+## 🚀 セットアップ
+
+### 1. リポジトリをクローン
+
+```bash
+git clone https://github.com/<your-username>/kira-x.git
+cd kira-x
+npm install
+```
+
+### 2. Supabase プロジェクトを作成
+
+[supabase.com](https://supabase.com) で新規プロジェクトを作成し、`setup_supabase.sql` を **SQL Editor** で実行。
+
+### 3. 環境変数を設定
+
+`.env.local` を作成：
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### 4. 起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`http://localhost:3000` を開く ✦
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🗄 データベース構成
 
-## Learn More
+```
+profiles   ← ユーザープロフィール（auth.users とトリガーで自動連携）
+tweets     ← 投稿（リポスト対応）
+likes      ← いいね（複合主キーで二重防止）
+follows    ← フォロー関係（複合主キーで二重防止）
+```
 
-To learn more about Next.js, take a look at the following resources:
+すべてのテーブルに **Row Level Security (RLS)** を設定済み。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔒 セキュリティ
 
-## Deploy on Vercel
+- RLS で全テーブルのアクセス制御
+- UUID で連番ID問題を回避
+- React の自動エスケープで XSS 対策
+- Supabase JS クライアントで SQL インジェクション対策
+- `service_role key` はフロント非公開
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🎨 デザイントークン
+
+| トークン | 値 |
+|----------|-----|
+| `--accent` | `#ff2e93`（ホットピンク） |
+| `--card` | `#fffafd` |
+| `--text` | `#3a1430` |
+| `--grad-btn` | `linear-gradient(135deg, #ff5fb0, #ff2e93, #c77dff)` |
+
+---
+
+## 📁 ディレクトリ構成
+
+```
+app/
+├── (main)/              # 認証済みルートグループ
+│   ├── layout.tsx       # BottomNav + 認証ガード
+│   ├── page.tsx         # ホームタイムライン
+│   ├── explore/         # ユーザー検索
+│   └── [username]/      # プロフィールページ
+├── auth/                # ログイン・サインアップ
+└── globals.css          # デザイントークン + アニメーション
+
+components/
+├── TweetCard.tsx          # いいね・リポスト・削除
+├── TweetComposer.tsx      # 投稿モーダル
+├── Timeline.tsx           # リアルタイムタイムライン
+├── BottomNav.tsx          # ボトムナビゲーション
+├── FollowButton.tsx       # フォロー（楽観的UI）
+├── EditProfileModal.tsx   # プロフィール編集
+├── EditProfileButton.tsx  # 編集ボタン（Client Wrapper）
+└── ProfileFAB.tsx         # プロフィールページ FAB
+```
+
+---
+
+## ✦ PINK CITY プロジェクト
+
+このアプリは **[PINK CITY](https://natsumi723723.github.io/pink-city-collector/)** プロジェクトの一環として開発されました。
+
+> PINKを文化にする都市型プロジェクト。
+
+---
+
+Made with 💗 by nachumin

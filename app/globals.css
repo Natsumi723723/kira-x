@@ -1,26 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --accent: #ff2e93;
+  --accent2: #ff8ec7;
+  --card: #fffafd;
+  --text: #3a1430;
+  --muted: #b27098;
+  --line: #ffdcef;
+  --chip: #ffe6f3;
+  --glow: rgba(255,46,147,.42);
+  --navbg: rgba(255,250,253,.92);
+  --grad-btn: linear-gradient(135deg,#ff5fb0,#ff2e93 55%,#c77dff);
+  --grad-logo: linear-gradient(95deg,#ff2e93,#c77dff);
+  --grad-banner: linear-gradient(120deg,#ff5fb0,#ff2e93 50%,#c77dff);
+  --grad-bg: linear-gradient(165deg,#ffd6ec 0%,#ffe7f5 45%,#f0ddff 100%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--grad-bg);
+  color: var(--text);
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+
+#app-root {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100dvh;
+  background: var(--card);
+  position: relative;
+  overflow-x: hidden;
+  box-shadow: 0 0 80px rgba(255,46,147,.18);
+}
+
+.logo-text {
+  font-family: 'Mochiy Pop One', sans-serif;
+  background: var(--grad-logo);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.grad-btn {
+  background: var(--grad-btn);
+  color: #fff;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px var(--glow);
+}
+
+.grad-btn:disabled {
+  background: #f3c4dd;
+  box-shadow: none;
+}
+
+/* アニメーション */
+@keyframes twinkle {
+  0%,100% { opacity:.15; transform:scale(.5) rotate(0deg); }
+  50% { opacity:1; transform:scale(1.15) rotate(45deg); }
+}
+
+@keyframes heartPop {
+  0% { transform:scale(1); }
+  40% { transform:scale(1.55); }
+  70% { transform:scale(.82); }
+  100% { transform:scale(1); }
+}
+
+@keyframes burst {
+  0% { transform:translate(0,0) scale(1); opacity:1; }
+  100% { transform:translate(var(--bx),var(--by)) scale(0); opacity:0; }
+}
+
+@keyframes slideup {
+  from { transform:translateY(100%); }
+  to { transform:translateY(0); }
+}
+
+@keyframes fadein {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+
+@keyframes pulseglow {
+  0%,100% { box-shadow:0 0 0 0 var(--glow), var(--grad-btn) 0 6px 20px; }
+  50% { box-shadow:0 0 0 12px rgba(255,46,147,0), 0 8px 32px var(--glow); }
+}
+
+.sparkle {
+  position:absolute;
+  color:var(--accent2);
+  animation: twinkle var(--dur,2.4s) ease-in-out infinite;
+  pointer-events:none;
+  font-size:14px;
+}
+
+.heart-anim { animation: heartPop .5s ease forwards; }
+
+.burst-particle {
+  position:absolute;
+  width:7px; height:7px;
+  border-radius:50%;
+  background:var(--accent);
+  pointer-events:none;
+  animation: burst .6s ease forwards;
+}
+
+.composer-overlay {
+  animation: fadein .2s ease;
+}
+.composer-sheet {
+  animation: slideup .32s cubic-bezier(.2,.9,.3,1);
+}
+
+/* スクロールバー */
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--line); border-radius:2px; }
+
+/* ストーリーリング */
+.story-ring {
+  background: var(--grad-btn);
+  border-radius:50%;
+  padding:2.5px;
+}
+.story-ring-inner {
+  background: var(--card);
+  border-radius:50%;
+  padding:2px;
 }
