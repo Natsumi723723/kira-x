@@ -42,12 +42,19 @@ export default function HomePage() {
     if (!id) return
 
     if (t === 'following') {
-      const { data: followingData } = await supabase.from('follows').select('following_id').eq('follower_id', id)
-      const ids = [id, ...(followingData?.map(f => f.following_id) ?? [])]
-      const { data } = await supabase.from('tweets').select('*, profiles!author_id(*), likes(user_id)').in('author_id', ids).order('created_at', { ascending: false }).limit(50)
+      // 自分 + フォロー中のIDリストを取得してフィルター
+      const { data: followingData } = await supabase
+        .from('follows').select('following_id').eq('follower_id', id)
+      const ids = [id, ...(followingData?.map((f: { following_id: string }) => f.following_id) ?? [])]
+      const { data } = await supabase
+        .from('tweets')
+        .select('*, profiles!author_id(*), likes(user_id), retweet_source:tweets!retweet_of(*, profiles!author_id(*))')
+        .in('author_id', ids)
+        .order('created_at', { ascending: false })
+        .limit(50)
       setTweets((data as Tweet[]) ?? [])
     } else {
-      const { data } = await supabase.from('tweets').select('*, profiles!author_id(*), likes(user_id)').order('created_at', { ascending: false }).limit(50)
+      const { data } = await supabase.from('tweets').select('*, profiles!author_id(*), likes(user_id), retweet_source:tweets!retweet_of(*, profiles!author_id(*))').order('created_at', { ascending: false }).limit(50)
       setTweets((data as Tweet[]) ?? [])
     }
     setLoading(false)

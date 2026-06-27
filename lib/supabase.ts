@@ -12,7 +12,7 @@ export type Profile = {
 export type Tweet = {
   id: string
   author_id: string
-  content: string
+  content: string | null  // リポスト時は null
   retweet_of: string | null
   created_at: string
   profiles: Profile

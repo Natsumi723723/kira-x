@@ -17,21 +17,15 @@ export default function Timeline({ currentUserId, profileUserId }: {
     if (profileUserId) {
       const { data } = await supabase
         .from('tweets')
-        .select('*, profiles!author_id(*), likes(user_id)')
+        .select('*, profiles!author_id(*), likes(user_id), retweet_source:tweets!retweet_of(*, profiles!author_id(*))')
         .eq('author_id', profileUserId)
         .order('created_at', { ascending: false })
         .limit(50)
       setTweets((data as Tweet[]) ?? [])
     } else if (currentUserId) {
-      const { data: followingData } = await supabase
-        .from('follows').select('following_id').eq('follower_id', currentUserId)
-      const ids = [currentUserId, ...(followingData?.map(f => f.following_id) ?? [])]
+      // RPC: サーバーサイドで JOIN → 1往復で取得（フォロー数が増えても安全）
       const { data } = await supabase
-        .from('tweets')
-        .select('*, profiles!author_id(*), likes(user_id)')
-        .in('author_id', ids)
-        .order('created_at', { ascending: false })
-        .limit(50)
+        .rpc('get_home_timeline', { p_user_id: currentUserId, p_limit: 50 })
       setTweets((data as Tweet[]) ?? [])
     }
     setLoading(false)

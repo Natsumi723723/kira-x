@@ -9,25 +9,24 @@ export default function FollowButton({ currentUserId, targetUserId, initialFollo
   initialFollowing: boolean
 }) {
   const [following, setFollowing] = useState(initialFollowing)
-  const [loading, setLoading] = useState(false)
 
   async function toggle() {
-    setLoading(true)
+    // ① 先にStateを反転
+    const nextFollowing = !following
+    setFollowing(nextFollowing)
+
+    // ② 裏でAPIを叩く（失敗したらロールバック）
     const supabase = createClient()
-    if (following) {
-      await supabase.from('follows').delete().match({ follower_id: currentUserId, following_id: targetUserId })
-      setFollowing(false)
-    } else {
-      await supabase.from('follows').insert({ follower_id: currentUserId, following_id: targetUserId })
-      setFollowing(true)
-    }
-    setLoading(false)
+    const { error } = nextFollowing
+      ? await supabase.from('follows').insert({ follower_id: currentUserId, following_id: targetUserId })
+      : await supabase.from('follows').delete().match({ follower_id: currentUserId, following_id: targetUserId })
+
+    if (error) setFollowing(!nextFollowing)
   }
 
   return (
     <button
       onClick={toggle}
-      disabled={loading}
       className={following ? '' : 'grad-btn'}
       style={{
         padding: '8px 20px',
@@ -43,7 +42,6 @@ export default function FollowButton({ currentUserId, targetUserId, initialFollo
         } : {
           border: 'none',
         }),
-        opacity: loading ? .6 : 1,
         transition: 'all .2s',
       }}
     >

@@ -95,3 +95,50 @@ CREATE POLICY "own avatar update" ON storage.objects
   FOR UPDATE USING (
     bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]
   );
+
+-- ─── RPC: ホームタイムライン（1回のサーバーサイドクエリ）───
+-- Supabase SQL Editor で実行してください
+
+CREATE OR REPLACE FUNCTION get_home_timeline(p_user_id UUID, p_limit INT DEFAULT 50)
+RETURNS JSON AS $$
+  SELECT json_agg(row)
+  FROM (
+    SELECT
+      t.id,
+      t.author_id,
+      t.content,
+      t.retweet_of,
+      t.created_at,
+      row_to_json(p) AS profiles,
+      COALESCE(
+        (SELECT json_agg(json_build_object('user_id', l.user_id))
+         FROM likes l WHERE l.tweet_id = t.id),
+        '[]'::json
+      ) AS likes
+    FROM tweets t
+    JOIN profiles p ON p.id = t.author_id
+    WHERE
+      t.author_id = p_user_id
+      OR t.author_id IN (
+        SELECT following_id FROM follows WHERE follower_id = p_user_id
+      )
+    ORDER BY t.created_at DESC
+    LIMIT p_limit
+  ) row;
+$$ LANGUAGE sql SECURITY DEFINER SET search_path = public;
+
+-- ─── リポスト設計修正 ───
+-- content を Nullable に変更（リポスト時は NULL を入れる）
+-- CHECK制約も「リポストか、本文がある投稿か」に更新
+ALTER TABLE tweets
+  ALTER COLUMN content DROP NOT NULL;
+
+ALTER TABLE tweets
+  DROP CONSTRAINT IF EXISTS tweets_content_check;
+
+ALTER TABLE tweets
+  ADD CONSTRAINT tweets_content_check CHECK (
+    (retweet_of IS NOT NULL AND content IS NULL)  -- リポスト
+    OR
+    (retweet_of IS NULL AND content IS NOT NULL AND char_length(content) <= 280)  -- 通常投稿
+  );
