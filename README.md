@@ -4,9 +4,12 @@
 
 > PINKは色じゃない。存在力・生命力・創造力の SUPERPOWER。
 
-![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
+[![Deploy to GitHub Pages](https://github.com/Natsumi723723/kira-x/actions/workflows/deploy.yml/badge.svg)](https://github.com/Natsumi723723/kira-x/actions/workflows/deploy.yml)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
 ![Supabase](https://img.shields.io/badge/Supabase-green?style=for-the-badge&logo=supabase)
 ![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=for-the-badge&logo=typescript)
+
+🌐 **公開URL**: [https://natsumi723723.github.io/kira-x/](https://natsumi723723.github.io/kira-x/)
 
 ---
 
@@ -14,15 +17,16 @@
 
 | 機能 | 説明 |
 |------|------|
-| 📝 投稿 | 140文字以内でつぶやき |
-| ♡ いいね | ハートアニメーション付き |
-| 🔁 リポスト | ワンタップで拡散 |
-| 👤 フォロー / フォロワー | 相互フォロー管理 |
-| 🏠 タイムライン | おすすめ / フォロー中 切り替え |
+| 📝 投稿 | つぶやき投稿 |
+| ♡ いいね | ハートアニメーション付き・楽観的UI |
+| 🔁 リポスト | ワンタップで拡散・楽観的UI |
+| 👤 フォロー / フォロワー | 相互フォロー管理・楽観的UI |
+| 🏠 タイムライン | おすすめ / フォロー中 切り替え（自分のツイートも表示） |
 | 🔍 検索 | ユーザー名・表示名で検索 |
 | 🖼 プロフィール編集 | 名前・自己紹介・アイコン写真の変更 |
 | ⚡ リアルタイム更新 | 新しい投稿が自動でタイムラインに追加 |
 | 📱 モバイルファースト | 430px 中央寄せ・ボトムナビ |
+| 🌐 GitHub Pages | 静的エクスポートで誰でもアクセス可能 |
 
 ---
 
@@ -64,7 +68,18 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 npm run dev
 ```
 
-`http://localhost:3000` を開く ✦
+`http://localhost:3000/kira-x/` を開く ✦
+
+---
+
+## 🌐 GitHub Pages へのデプロイ
+
+`main` にプッシュすると GitHub Actions が自動でビルド＆デプロイします。
+
+初回のみ設定が必要：
+
+1. **Secrets を追加**: `Settings > Secrets > Actions` で `NEXT_PUBLIC_SUPABASE_URL` と `NEXT_PUBLIC_SUPABASE_ANON_KEY` を登録
+2. **Pages を有効化**: `Settings > Pages > Source` を **GitHub Actions** に設定
 
 ---
 
@@ -115,12 +130,12 @@ app/
 └── globals.css          # デザイントークン + アニメーション
 
 components/
-├── TweetCard.tsx          # いいね・リポスト・削除
+├── TweetCard.tsx          # いいね・リポスト・削除（楽観的UI）
 ├── TweetComposer.tsx      # 投稿モーダル
 ├── Timeline.tsx           # リアルタイムタイムライン
 ├── BottomNav.tsx          # ボトムナビゲーション
 ├── FollowButton.tsx       # フォロー（楽観的UI）
-├── EditProfileModal.tsx   # プロフィール編集
+├── EditProfileModal.tsx   # プロフィール編集・アイコンアップロード
 ├── EditProfileButton.tsx  # 編集ボタン（Client Wrapper）
 └── ProfileFAB.tsx         # プロフィールページ FAB
 ```
