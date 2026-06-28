@@ -15,6 +15,15 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
 
+  async function signInWithGoogle() {
+    const supabase = createClient()
+    const base = window.location.origin + (window.location.pathname.startsWith('/kira-x') ? '/kira-x' : '')
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${base}/auth/callback/` },
+    })
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
@@ -105,11 +114,12 @@ export default function AuthPage() {
         </div>
 
         <div style={{ display:'flex', gap:10 }}>
-          {['🍎 Apple','🌈 Google'].map(label => (
-            <button key={label} style={{ flex:1, padding:'11px 0', borderRadius:16, background:'rgba(255,255,255,.8)', border:'1.5px solid var(--line)', color:'var(--text)', fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'M PLUS Rounded 1c' }}>
-              {label}
-            </button>
-          ))}
+          <button style={{ flex:1, padding:'11px 0', borderRadius:16, background:'rgba(255,255,255,.8)', border:'1.5px solid var(--line)', color:'var(--text)', fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'M PLUS Rounded 1c', opacity:.5 }}>
+            🍎 Apple
+          </button>
+          <button onClick={signInWithGoogle} style={{ flex:1, padding:'11px 0', borderRadius:16, background:'rgba(255,255,255,.8)', border:'1.5px solid var(--line)', color:'var(--text)', fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'M PLUS Rounded 1c' }}>
+            🌈 Google
+          </button>
         </div>
 
         <p style={{ textAlign:'center', marginTop:16, fontSize:13, color:'var(--muted)' }}>
